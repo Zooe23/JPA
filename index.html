@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UT JPA - Gestión de Entidades (Simulador)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .badge-jpa { background-color: #6f42c1; color: white; }
+  </style>
+</head>
+<body class="py-4">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+      <div>
+        <h1 class="h3 text-primary mb-0">☕ Proyecto UT JPA</h1>
+        <p class="text-muted mb-0">Demostración web estática de persistencia de datos (DAO / Entidades)</p>
+      </div>
+      <span class="badge badge-jpa fs-6">JPA Demo</span>
+    </div>
+
+    <div class="row g-4">
+      <!-- Formulario para agregar entidad -->
+      <div class="col-md-5">
+        <div class="card p-4">
+          <h5 class="card-title text-secondary mb-3">Registrar Nueva Entidad</h5>
+          <form id="jpaForm">
+            <div class="mb-3">
+              <label class="form-label">Nombre / Descripción</label>
+              <input type="text" id="nombreInput" class="form-control" placeholder="Ej. Alumno / Producto" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Categoría / Tipo</label>
+              <select id="categoriaInput" class="form-select">
+                <option value="General">General</option>
+                <option value="Sistemas">Sistemas</option>
+                <option value="UT JPA">UT JPA</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Guardar en la Base de Datos (Persistir)</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabla de entidades registradas -->
+      <div class="col-md-7">
+        <div class="card p-4">
+          <h5 class="card-title text-secondary mb-3">Registros en BD (Persistidos)</h5>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaEntidades">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let entidades = [
+      { id: 1, nombre: "Objeto Inicial 1", categoria: "UT JPA" },
+      { id: 2, nombre: "Objeto Inicial 2", categoria: "Sistemas" }
+    ];
+
+    function renderTabla() {
+      const tbody = document.getElementById('tablaEntidades');
+      tbody.innerHTML = '';
+      entidades.forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>#${item.id}</strong></td>
+            <td>${item.nombre}</td>
+            <td><span class="badge bg-info text-dark">${item.categoria}</span></td>
+            <td>
+              <button onclick="eliminar(${item.id})" class="btn btn-sm btn-outline-danger">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById('jpaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombreInput').value;
+      const categoria = document.getElementById('categoriaInput').value;
+      const nuevoId = entidades.length ? entidades[entidades.length - 1].id + 1 : 1;
+
+      entidades.push({ id: nuevoId, nombre, categoria });
+      renderTabla();
+      this.reset();
+    });
+
+    function eliminar(id) {
+      entidades = entidades.filter(e => e.id !== id);
+      renderTabla();
+    }
+
+    renderTabla();
+  </script>
+</body>
+</html>
